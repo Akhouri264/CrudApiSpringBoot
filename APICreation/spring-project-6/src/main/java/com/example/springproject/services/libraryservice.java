@@ -140,6 +140,9 @@ public class libraryservice implements libraryServiceInterface{
 		}
     }
 
+	
+	
+	//used to produce the bug
 	public Page<Librarytrial> bookPaginationtrial(int offset,int pageSize,String choice ){
 		try {
 		return searchTrial.findAll(PageRequest.of(offset, pageSize).withSort(Sort.Direction.ASC, choice));
@@ -156,9 +159,8 @@ public class libraryservice implements libraryServiceInterface{
 		}catch (Exception e) {
 			System.out.println("trialError::"+e.getMessage());
 			return null;
-			// TODO: handle exception
 		}
-		
 	}
+	//*end
 }
 	

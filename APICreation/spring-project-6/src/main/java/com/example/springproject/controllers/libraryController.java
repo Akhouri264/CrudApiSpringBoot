@@ -164,9 +164,16 @@ public class libraryController extends Exception {
 //		System.out.println("field is :::"+field);
 //		return  libraryService.sorting(field);
 //	}
+	
 	@GetMapping("library/page/{offset}/{pageSize}/{choice}")
-	public Object paginationSort(@PathVariable int offset, @PathVariable int pageSize,@PathVariable String choice) {
-		return  libraryService.bookPaginationSort(offset, pageSize,choice);
+	public Page<library> paginationSortWithAttribute(@PathVariable int offset, @PathVariable int pageSize,@PathVariable String choice) {
+		return libraryService.bookPaginationSort(offset, pageSize,choice);
+		//		Page<library> sortAttribute= libraryService.bookPaginationSort(offset, pageSize,choice);
+//		if(sortAttribute!=null) {
+//			return ResponseEntity.status(HttpStatus.OK).body(sortAttribute);
+//		}else {
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//		}
 	}
 	@GetMapping("library/page/{offset}/{pageSize}")
 	public Object paginationLib(@PathVariable int offset, @PathVariable int pageSize) {
