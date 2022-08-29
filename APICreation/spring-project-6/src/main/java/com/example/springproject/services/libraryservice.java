@@ -65,9 +65,8 @@ public class libraryservice implements libraryServiceInterface{
 			return librare.findById((Integer) id).orElse(null);
 		}
 		catch (Exception e) {
-			System.out.println("getbook::"+e.getMessage());
+			System.err.println("getbook::"+e.getMessage());
 			return null;
-			// TODO: handle exception
 		}
 	}
 	
@@ -84,7 +83,7 @@ public class libraryservice implements libraryServiceInterface{
 			return "item deleted successfully";
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 			return false;
 		}}
 	}

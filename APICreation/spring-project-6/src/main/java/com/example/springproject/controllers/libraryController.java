@@ -2,6 +2,9 @@ package com.example.springproject.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.jni.Library;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
@@ -33,6 +36,9 @@ import com.example.springproject.security.AuthRequest;
 import com.example.springproject.security.AuthResponse;
 //import com.example.springproject.services.UserService;
 import com.example.springproject.services.libraryservice;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonAnyFormatVisitor;
+
+import org.springframework.http.HttpHeaders;
 //import com.sipios.springsearch.SpecificationImpl;
 //import com.sipios.springsearch.anotation.SearchSpec;
 
@@ -81,13 +87,12 @@ public class libraryController extends Exception {
 //        return  new AuthResponse(token);
 //    }
 	@GetMapping("/library/all")
-	public List<library> getAll() {
-		try {
-			return libraryService.getAll();
-		} catch (Exception e) {
-			System.out.println("CtrilErro1" + e.getMessage());
-			return null;
+	public ResponseEntity<List<library>> getAll() {
+		List<library> BooksList=libraryService.getAll();
+		if(BooksList.size()<=0) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
+		return ResponseEntity.status(HttpStatus.FOUND).body(BooksList);
 	}
 	@GetMapping("/library/all/key/{keyword}")
 	public List<library> getAllS(@PathVariable(name="keyword", required = false) String keyword) {
@@ -100,29 +105,44 @@ public class libraryController extends Exception {
 		}
 	}
 	@GetMapping(path="/library/api/{id}")
-	public library getbookbyid(@PathVariable(value = "id") Integer id) {
-		try {
-		return libraryService.getBookById(id);
+	public ResponseEntity<library> getbookbyid(@PathVariable(value = "id") Integer id,HttpServletResponse hr) {
+		library book=libraryService.getBookById(id);
+		if(book==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
-		catch (Exception e) {
-			System.out.println("getbook_id::"+e.getMessage());
-			return null;
-			// TODO: handle exception
-		}
+		return ResponseEntity.status(HttpStatus.FOUND).body(book);
+		
 	}
 
 	@PostMapping("/library")
-	public Object postbooks(@RequestBody library lib) {
+	public ResponseEntity<library> postbooks(@RequestBody library lib) {
+		library libbook=libraryService.saveBook(lib);
+		  HttpHeaders responseHeaders = new HttpHeaders();
 		if (lib.getBookid() == null || lib.getBookid() < 1) {
-			return HttpStatus.BAD_REQUEST;
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 		} else {
-			return libraryService.saveBook(lib);
+		    return ResponseEntity.ok().headers(responseHeaders).body(libbook);
 		}
 	}
 
 	@DeleteMapping("/library/id/{id}")
-	public Object deleteBookById(@PathVariable(value = "id") int id) {
-		return libraryService.deleteBook(id);
+	public String deleteBookById(@PathVariable(value = "id") int id) {
+//		try {
+//		System.out.println();
+		ResponseEntity<library> l=getbookbyid(id, null);
+		if(!l.hasBody()) {
+			return "id not found so not able to delete";
+		}
+		else {
+			libraryService.deleteBook(id);
+			return "successfully deleted";
+		}
+//			return  ResponseEntity.status(HttpStatus.OK).build();
+//		}
+//		catch(Exception e) {
+//			e.printStackTrace();
+//			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//		}
 	}
 
 //	@GetMapping("{searchText}")
