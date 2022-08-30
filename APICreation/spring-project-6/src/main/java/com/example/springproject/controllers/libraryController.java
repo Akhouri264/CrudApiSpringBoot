@@ -2,9 +2,6 @@ package com.example.springproject.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.jni.Library;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
@@ -36,24 +33,15 @@ import com.example.springproject.security.AuthRequest;
 import com.example.springproject.security.AuthResponse;
 //import com.example.springproject.services.UserService;
 import com.example.springproject.services.libraryservice;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonAnyFormatVisitor;
+import com.sipios.springsearch.SpecificationImpl;
+import com.sipios.springsearch.anotation.SearchSpec;
 
-import org.springframework.http.HttpHeaders;
-//import com.sipios.springsearch.SpecificationImpl;
-//import com.sipios.springsearch.anotation.SearchSpec;
-
-//@CrossOrigin(origins = "http://localhost:3000")
-@CrossOrigin(origins = "*")
 @RestController
 //@RequestMapping("/api/v1")
 public class libraryController extends Exception {
-/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	//	@Autowired 
+//	@Autowired 
 //	private AuthenticationManager authenticationManager;
-//	
 	@Autowired
 	private libraryservice libraryService;
 
@@ -88,16 +76,16 @@ public class libraryController extends Exception {
 //    }
 	@GetMapping("/library/all")
 	public ResponseEntity<List<library>> getAll() {
-		List<library> BooksList=libraryService.getAll();
-		if(BooksList.size()<=0) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		try {
+			return libraryService.getAll();
+		} catch (Exception e) {
+			System.out.println("CtrilErro1" + e.getMessage());
+			return null;
 		}
-		return ResponseEntity.status(HttpStatus.FOUND).body(BooksList);
 	}
 	@GetMapping("/library/all/key/{keyword}")
-	public List<library> getAllS(@PathVariable(name="keyword", required = false) String keyword) {
+	public ResponseEntity<List<library>> getAllS(@PathVariable(name="keyword", required = false) String keyword) {
 		try {
-			System.out.println("getalls::"+keyword);
 			return libraryService.listAll(keyword);
 		} catch (Exception e) {
 			System.out.println("SearchError::" + e.getMessage());
@@ -105,80 +93,66 @@ public class libraryController extends Exception {
 		}
 	}
 	@GetMapping(path="/library/api/{id}")
-	public ResponseEntity<library> getbookbyid(@PathVariable(value = "id") Integer id,HttpServletResponse hr) {
-		library book=libraryService.getBookById(id);
-		if(book==null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	public ResponseEntity<library> getbookbyid(@PathVariable(value = "id") Integer id) {
+		try {
+		return libraryService.getBookById(id);
 		}
-		return ResponseEntity.status(HttpStatus.FOUND).body(book);
-		
+		catch (Exception e) {
+			System.out.println("getbook_id::"+e.getMessage());
+			return null;
+		}
 	}
 
 	@PostMapping("/library")
-	public ResponseEntity<library> postbooks(@RequestBody library lib) {
-		library libbook=libraryService.saveBook(lib);
-		  HttpHeaders responseHeaders = new HttpHeaders();
+	public Object postbooks(@RequestBody library lib) {
 		if (lib.getBookid() == null || lib.getBookid() < 1) {
-			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
-		    return ResponseEntity.ok().headers(responseHeaders).body(libbook);
+			try{
+				return libraryService.saveBook(lib);
+			}catch (Exception e) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
 		}
 	}
 
 	@DeleteMapping("/library/id/{id}")
-	public String deleteBookById(@PathVariable(value = "id") int id) {
-//		try {
-//		System.out.println();
-		ResponseEntity<library> l=getbookbyid(id, null);
-		if(!l.hasBody()) {
-			return "id not found so not able to delete";
+	public Object deleteBookById(@PathVariable(value = "id") int id) {
+		String message= libraryService.deleteBook(id);
+		if(!message.equals("false")) {
+			return new ResponseEntity<>(message,HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
 		}
-		else {
-			libraryService.deleteBook(id);
-			return "successfully deleted";
-		}
-//			return  ResponseEntity.status(HttpStatus.OK).build();
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//		}
 	}
-
-//	@GetMapping("{searchText}")
-//	public Page<library> SearchAll(Pageable pageable,@PathVariable String searchText) {
-//		try {
-//			if(libraryService.searchAll(pageable, searchText)==null) {
-//				System.out.println( "False::"+HttpStatus.BAD_REQUEST);
-//				return null;
-//			}else {
-//				return libraryService.searchAll(pageable, searchText);
-//			}
-//		}catch (Exception e) {
-//			System.out.println("Error/Exception Found::"+e.getMessage());
-//		}
-//		return null;
-//	}
-//	@GetMapping("/library/all/{field}")
-//	public List<library> Searchsort(@PathVariable String field) {
-//		System.out.println("field is :::"+field);
-//		return  libraryService.sorting(field);
+	@GetMapping("library/page/{offset}/{pageSize}/{choice}/{direction}")
+	public  ResponseEntity<Page<library>> paginationSort(@PathVariable String offset,
+			@PathVariable String pageSize,@PathVariable String choice,@PathVariable
+			String direction) {
+		int Intoffset=Integer.parseInt(offset);
+		int IntpageSize=Integer.parseInt(pageSize);
+		ResponseEntity<Page<library>> pl= libraryService.bookPaginationSort(Intoffset, IntpageSize,choice,direction);
+		if(pl.getStatusCode()!=HttpStatus.OK) {
+			System.out.println("offset="+offset+",pagesize="+pageSize+",choice="+choice);
+			return null;
+			}else {
+				System.out.println("offset="+offset+",pagesize="+pageSize+",choice="+choice);
+			return pl;
+		}
+	}
+	//try to know about slice and page 
+//	@GetMapping("library/pages/{keyword}")
+//	public  Object paginationSearch(Pageable pageable,@PathVariable String keyword) {
+//		return libraryService.findAllLibrBook(pageable,keyword);
 //	}
 	
-	@GetMapping("library/page/{offset}/{pageSize}/{choice}")
-	public Page<library> paginationSortWithAttribute(@PathVariable int offset, @PathVariable int pageSize,@PathVariable String choice) {
-		return libraryService.bookPaginationSort(offset, pageSize,choice);
-		//		Page<library> sortAttribute= libraryService.bookPaginationSort(offset, pageSize,choice);
-//		if(sortAttribute!=null) {
-//			return ResponseEntity.status(HttpStatus.OK).body(sortAttribute);
-//		}else {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//		}
-	}
 	@GetMapping("library/page/{offset}/{pageSize}")
 	public Object paginationLib(@PathVariable int offset, @PathVariable int pageSize) {
 		return libraryService.bookPagination(offset, pageSize);
 	}
+	
+	
+	//to produce bug
 	@GetMapping("library1/page/{offset}/{pageSize}/{choice}")
 	public Object paginationLi(@PathVariable int offset, @PathVariable int pageSize,@PathVariable String choice) {
 		try {
@@ -198,6 +172,6 @@ public class libraryController extends Exception {
 			return null;
 		}
 	}
-	
+	//to produce bug
 	
 }

@@ -30,48 +30,46 @@ public class libraryservice implements libraryServiceInterface{
 //	@Autowired
 //	private library Ilibr;
 	@Override
-	public List<library>getAll()
+	public ResponseEntity<List<library>> getAll()
 	{
 		try {
-			return (List<library>) librare.findAll();
+			return new ResponseEntity<>(librare.findAll(),HttpStatus.OK);
 		}
 		catch(Exception e){
-			System.out.println("error1"+e.getMessage());
-			return null;
+			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 	}
-	public List<library> listAll(String keyword) {
-        if (keyword != null) {
-            return librare.search(keyword);
+	@Override
+	public ResponseEntity<List<library>> listAll(String keyword) {
+        if (librare.search(keyword).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }else {
-        	System.out.println("keyword::"+keyword);
-        return librare.findAll();
+        	return new ResponseEntity<>(librare.search(keyword),HttpStatus.OK);
         }
         }
 	@Override
-	public library saveBook(library lib) {
-		try{
-			return librare.save(lib);
+	public Object saveBook(library lib) {
+			try {
+				return librare.save(lib);
+			}catch (Exception e) {
+				e.printStackTrace();
+				return e.getMessage();
+				// TODO: handle exception
+			}
+	}
+	
+	@Override
+	public ResponseEntity<library> getBookById(int id){
+		if(librare.findById(id).isEmpty()) {
+			return new ResponseEntity(librare.findById(id),HttpStatus.NOT_FOUND);
 		}
-		catch(Exception e) {
-			System.out.println("error2::"+e.getMessage());
-			return null;
+		else {
+			return new ResponseEntity(librare.findById(id),HttpStatus.OK);
 		}
 	}
 	
 	@Override
-	public library getBookById(Integer id){
-		try {
-			return librare.findById((Integer) id).orElse(null);
-		}
-		catch (Exception e) {
-			System.err.println("getbook::"+e.getMessage());
-			return null;
-		}
-	}
-	
-	@Override
-	public Object deleteBook(int id) {
+	public String deleteBook(int id) {
 		if(id<=0)
 		{
 			return "cannot delete with the given id";
@@ -84,52 +82,23 @@ public class libraryservice implements libraryServiceInterface{
 		}
 		catch(Exception e) {
 			System.err.println(e.getMessage());
-			return false;
+			return "false";
 		}}
 	}
-//	@Override
-//	public Object findAll(int pageNumber, int pageSize, String sortBy, String sortDir){
-//		return ResponseEntity<>(Ilib.findAll(
-//				PageRequest.of(
-//						pageNumber, pageSize,
-//						sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
-//				)
-//		), HttpStatus.OK);
-//	}
-//	@Autowired
-//	private SearchRepo seo;
-//	@Override
-//	public Page<library> searchAll(Pageable pageable, String searchText) {
-//		// TODO Auto-generated method stub
-//		try {
-//			return searchTrial.findAllBooks(pageable, searchText);
-//		}
-//		catch(Exception e) {
-//			System.out.println("FindAll Exception::"+e.getMessage());
-//			return null;
-//		}
-//	}
-//	public List<library> sorting(String field) {
-//		try {
-//			return librare.findAll(Sort.by(Sort.Direction.ASC,field));
-//		}catch (Exception e) {
-//			System.out.println("field is :"+field);
-//			System.out.println("sorting Exception:"
-//			//+field
-//					+"::"+e.getMessage());
-//			return null;
-//		}
-//	}
-	
-	public Page<library> bookPaginationSort(int offset,int pageSize,String choice){
+	@Override
+	public ResponseEntity<Page<library>> bookPaginationSort(int offset,int pageSize,String choice,String direction){
 		try {
-		return librare.findAll(PageRequest.of(offset, pageSize).withSort(Sort.Direction.ASC,choice));
+		return new ResponseEntity<>(librare.findAll(
+				PageRequest.of(
+						offset, pageSize,direction.equalsIgnoreCase("asc") ? Sort.by(choice).ascending()
+								: Sort.by(choice).descending())), HttpStatus.OK);
 		}
 		catch (Exception e) {
 			System.out.println("sorting Error::"+e.getMessage());
 			return null;
 		}
     }
+	@Override
 	public Page<library> bookPagination(int offset,int pageSize){
 		try {
 		return librare.findAll(PageRequest.of(offset, pageSize));
@@ -162,5 +131,6 @@ public class libraryservice implements libraryServiceInterface{
 		}
 	}
 	//*end
+	
 }
 	
