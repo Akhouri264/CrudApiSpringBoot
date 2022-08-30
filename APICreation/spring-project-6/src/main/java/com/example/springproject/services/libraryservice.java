@@ -15,20 +15,17 @@ import org.springframework.data.domain.Sort;
 import com.example.springproject.model.Librarytrial;
 import com.example.springproject.model.library;
 import com.example.springproject.repository.SearchRepo;
-//import com.example.springproject.repository.SearchRepo;
 import com.example.springproject.repository.libraryRepo;
 
 import org.springframework.http.ResponseEntity;
 @Service
 public class libraryservice implements libraryServiceInterface{
-//},SearchInterface<library> {
 	@Autowired
 	private libraryRepo librare;
 
 	@Autowired
 	private SearchRepo searchTrial;
-//	@Autowired
-//	private library Ilibr;
+
 	@Override
 	public ResponseEntity<List<library>> getAll()
 	{
