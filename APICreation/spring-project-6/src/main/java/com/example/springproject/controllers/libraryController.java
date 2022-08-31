@@ -11,10 +11,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //to disable security comment line number 14 to 17
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.BadCredentialsException;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +31,8 @@ import com.example.springproject.model.library;
 import com.example.springproject.repository.libraryRepo;
 import com.example.springproject.security.AuthRequest;
 import com.example.springproject.security.AuthResponse;
-import com.example.springproject.security.JwtUtil;
-import com.example.springproject.services.UserService;
+//import com.example.springproject.security.JwtUtil;
+//import com.example.springproject.services.UserService;
 import com.example.springproject.services.libraryservice;
 import com.sipios.springsearch.SpecificationImpl;
 import com.sipios.springsearch.anotation.SearchSpec;
@@ -41,40 +41,40 @@ import com.sipios.springsearch.anotation.SearchSpec;
 //@RequestMapping("/api/v1")
 public class libraryController extends Exception {
 	private static final long serialVersionUID = 1L;
-	@Autowired 
-	private AuthenticationManager authenticationManager;
+//	@Autowired 
+//	private AuthenticationManager authenticationManager;
 	@Autowired
 	private libraryservice libraryService;
 
-	@Autowired
-	private JwtUtil jwtUtil;
-	@Autowired 
-	private UserService userService; 
+//	@Autowired
+//	private JwtUtil jwtUtil;
+//	@Autowired 
+//	private UserService userService; 
 	
-	@GetMapping("/authenticate")
-    public AuthResponse authenticate(@RequestBody AuthRequest jwtRequest) throws Exception{
-
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            jwtRequest.getUsername(),
-                            jwtRequest.getPassword()
-                    )
-            );
-        } catch (Exception e) {
-            System.out.println(jwtRequest.getUsername());
-            System.out.println(jwtRequest.getPassword());
-        	System.out.println(e.getMessage());
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-        
-        final UserDetails userDetails = userService.loadUserByUsername(jwtRequest.getUsername());
-
-        final String token =
-                jwtUtil.generateToken(userDetails);
-
-        return  new AuthResponse(token);
-    }
+//	@GetMapping("/authenticate")
+//    public AuthResponse authenticate(@RequestBody AuthRequest jwtRequest) throws Exception{
+//
+//        try {
+//            authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            jwtRequest.getUsername(),
+//                            jwtRequest.getPassword()
+//                    )
+//            );
+//        } catch (Exception e) {
+//            System.out.println(jwtRequest.getUsername());
+//            System.out.println(jwtRequest.getPassword());
+//        	System.out.println(e.getMessage());
+//            throw new Exception("INVALID_CREDENTIALS", e);
+//        }
+//        
+//        final UserDetails userDetails = userService.loadUserByUsername(jwtRequest.getUsername());
+//
+//        final String token =
+//                jwtUtil.generateToken(userDetails);
+//
+//        return  new AuthResponse(token);
+//    }
 	@GetMapping("/library/all")
 	public ResponseEntity<List<library>> getAll() {
 		try {
@@ -119,12 +119,15 @@ public class libraryController extends Exception {
 
 	@DeleteMapping("/library/id/{id}")
 	public Object deleteBookById(@PathVariable(value = "id") int id) {
-		if(getbookbyid(id).getStatusCode()==HttpStatus.BAD_REQUEST) {
+			ResponseEntity<library> l=getbookbyid(id);
+			if(l.getStatusCodeValue()==404) {
 			return new ResponseEntity<>("DATA IS UNAVAILABLE FOR GIVEN ID.",HttpStatus.BAD_REQUEST);
 		}
 		String message= libraryService.deleteBook(id);
 		return new ResponseEntity<>(message,HttpStatus.OK);
 	}
+	
+	
 	@GetMapping("library/page/{offset}/{pageSize}/{choice}/{direction}")
 	public  ResponseEntity<Page<library>> paginationSort(@PathVariable String offset,
 			@PathVariable String pageSize,@PathVariable String choice,@PathVariable

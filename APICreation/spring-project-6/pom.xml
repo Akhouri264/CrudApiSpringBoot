@@ -47,7 +47,7 @@
 		    <artifactId>spring-search</artifactId>
 		    <version>0.2.0</version>
 		</dependency>
-		<!-- remove 51 to 65 to remove security -->
+		<!-- remove 51 to 65 to remove security 
 		<dependency>
 		  <groupId>org.springframework.boot</groupId>
 		  <artifactId>spring-boot-starter-security</artifactId>
@@ -57,12 +57,13 @@
 		  <artifactId>spring-security-test</artifactId>
 		  <scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
 		<dependency>
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
 		    <version>0.9.1</version>
 		</dependency>
+		-->
+		
 		<dependency>
 		    <groupId>com.sun.xml.bind</groupId>
 		    <artifactId>jaxb-impl</artifactId>
