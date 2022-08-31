@@ -14,6 +14,7 @@ token you copy.
 Now you can use CRUD, Pagination,Global Searching, Sorting,etc API.
 
 for example:
+** configuration related with postgreSQL required for the implementation.
 
 http://localhost:8085/library/page/0/100/bookid/desc
 
