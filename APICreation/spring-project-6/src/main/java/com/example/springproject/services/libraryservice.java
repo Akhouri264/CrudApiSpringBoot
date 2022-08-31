@@ -67,20 +67,8 @@ public class libraryservice implements libraryServiceInterface{
 	
 	@Override
 	public String deleteBook(int id) {
-		if(id<=0)
-		{
-			return "cannot delete with the given id";
-		}
-		else {
-		try
-		{
 			librare.deleteById(id);
 			return "item deleted successfully";
-		}
-		catch(Exception e) {
-			System.err.println(e.getMessage());
-			return "false";
-		}}
 	}
 	@Override
 	public ResponseEntity<Page<library>> bookPaginationSort(int offset,int pageSize,String choice,String direction){

@@ -3,11 +3,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
+@SuppressWarnings("deprecation")
 @CrossOrigin(origins = "*")
 @SpringBootApplication
 @EnableWebSecurity
@@ -22,7 +22,6 @@ public class SpringProject6Application {
 		System.out.println("Nikhil m::"+e.getMessage());
 		}
 	}
-	@SuppressWarnings("deprecation")
 	@Bean
 	NoOpPasswordEncoder pwdEncoder() {
 		return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();

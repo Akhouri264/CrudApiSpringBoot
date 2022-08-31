@@ -119,12 +119,11 @@ public class libraryController extends Exception {
 
 	@DeleteMapping("/library/id/{id}")
 	public Object deleteBookById(@PathVariable(value = "id") int id) {
-		String message= libraryService.deleteBook(id);
-		if(!message.equals("false")) {
-			return new ResponseEntity<>(message,HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+		if(getbookbyid(id).getStatusCode()==HttpStatus.BAD_REQUEST) {
+			return new ResponseEntity<>("DATA IS UNAVAILABLE FOR GIVEN ID.",HttpStatus.BAD_REQUEST);
 		}
+		String message= libraryService.deleteBook(id);
+		return new ResponseEntity<>(message,HttpStatus.OK);
 	}
 	@GetMapping("library/page/{offset}/{pageSize}/{choice}/{direction}")
 	public  ResponseEntity<Page<library>> paginationSort(@PathVariable String offset,
