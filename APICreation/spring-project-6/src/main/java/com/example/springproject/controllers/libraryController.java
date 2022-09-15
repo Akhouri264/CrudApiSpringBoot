@@ -38,6 +38,7 @@ import com.sipios.springsearch.SpecificationImpl;
 import com.sipios.springsearch.anotation.SearchSpec;
 
 @RestController
+@CrossOrigin(value = "*")
 //@RequestMapping("/api/v1")
 public class libraryController extends Exception {
 	private static final long serialVersionUID = 1L;
@@ -51,9 +52,8 @@ public class libraryController extends Exception {
 	@Autowired 
 	private UserService userService; 
 	
-	@GetMapping("/authenticate")
+	@PostMapping("/authenticate")
     public AuthResponse authenticate(@RequestBody AuthRequest jwtRequest) throws Exception{
-
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
