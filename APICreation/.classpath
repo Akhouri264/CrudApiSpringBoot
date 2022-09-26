@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="com/example/springproject/services/|com/example/springproject/security/" kind="src" path="spring-project-6/src/main/java"/>
+	<classpathentry kind="src" path="spring-project-6/src/main/java/com/example/springproject/security"/>
+	<classpathentry kind="src" path="spring-project-6/src/main/java/com/example/springproject/services"/>
+	<classpathentry kind="src" path="spring-project-6/src/test/java"/>
+	<classpathentry kind="lib" path="spring-project-6/.mvn/wrapper/maven-wrapper.jar"/>
+	<classpathentry kind="output" path="spring-project-6/target/classes"/>
+</classpath>

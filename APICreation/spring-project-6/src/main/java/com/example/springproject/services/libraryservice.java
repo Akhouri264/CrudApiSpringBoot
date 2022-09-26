@@ -2,6 +2,8 @@ package com.example.springproject.services;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,20 +14,21 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Sort;
 
-import com.example.springproject.model.Librarytrial;
+//import com.example.springproject.model.Librarytrial;
+//import com.example.springproject.repository.SearchRepo;
 import com.example.springproject.model.library;
-import com.example.springproject.repository.SearchRepo;
 import com.example.springproject.repository.libraryRepo;
 
-import org.springframework.http.ResponseEntity;
+
 @Service
+
+@Transactional
 public class libraryservice implements libraryServiceInterface{
 	@Autowired
 	private libraryRepo librare;
 
 	@Autowired
-	private SearchRepo searchTrial;
-
+//	private SearchRepo searchTrial;
 	@Override
 	public ResponseEntity<List<library>> getAll()
 	{
@@ -97,25 +100,29 @@ public class libraryservice implements libraryServiceInterface{
 	
 	
 	//used to produce the bug
-	public Page<Librarytrial> bookPaginationtrial(int offset,int pageSize,String choice ){
-		try {
-		return searchTrial.findAll(PageRequest.of(offset, pageSize).withSort(Sort.Direction.ASC, choice));
-		}
-		catch (Exception e) {
-			System.out.println("pagination Error::"+e.getMessage());
-			return null;
-		}
-    }
-	public List<Librarytrial>getAlltrial()
-	{
-		try {
-			return searchTrial.findAll();
-		}catch (Exception e) {
-			System.out.println("trialError::"+e.getMessage());
-			return null;
-		}
-	}
+//	public Page<Librarytrial> bookPaginationtrial(int offset,int pageSize,String choice ){
+//		try {
+//		return searchTrial.findAll(PageRequest.of(offset, pageSize).withSort(Sort.Direction.ASC, choice));
+//		}
+//		catch (Exception e) {
+//			System.out.println("pagination Error::"+e.getMessage());
+//			return null;
+//		}
+//    }
+//	public List<Librarytrial>getAlltrial()
+//	{
+//		try {
+//			return searchTrial.findAll();
+//		}catch (Exception e) {
+//			System.out.println("trialError::"+e.getMessage());
+//			return null;
+//		}
+//	}
 	//*end
+	     
+	    public List<library> listAll() {
+	        return librare.findAll(Sort.by("bookid").ascending());
+	    }
 	
 }
 	

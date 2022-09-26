@@ -5,14 +5,28 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.logging.log4j.message.Message;
+import org.jetbrains.annotations.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import springfox.documentation.annotations.ApiIgnore;
+
 @Entity
 @Table(name="libraryl", schema = "public")
+@ApiIgnore
 public class library {
 	@Id
+	@ApiModelProperty(notes = "bookid")
+    @NotNull(value = "First Name cannot be null")
 	private Integer bookid;
+
+	@ApiModelProperty(notes = "bookname")
 	private String bookname;
+	@ApiModelProperty(notes = "bookauthor")
 	private String bookauthor;
+	@ApiModelProperty(notes = "bookcategory")
 	private String bookcategory;
+	@ApiModelProperty(notes = "bookdescriptions")
 	private String bookdescriptions;
 	public library() {
 		super();
